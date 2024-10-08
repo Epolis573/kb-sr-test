@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>キーボードスキャンレートツール | Keyboard scan rate tool </title>
+    <style type="text/css" media="screen">
+table{
+  border-collapse:collapse;
+  border:1px solid #000000;
+  padding: 5px;
+}
+
+table td{
+  border:1px solid #000000;
+  padding: 5px;
+}
+
+table th{
+  border:1px solid #000000;
+  padding: 5px;
+}
+    </style>
+  </head>
+  <body>
+    <h2>このページの使い方</h2>
+    <p>
+      このツールを使用するには、できるだけ速くキーを押して離してください。
+      キーキャップの端をはじくと、非常に短いキー押下がうまくできることがあります。
+    </p>
+    <p>
+      To use this tool, try to press and release a key as quickly as possible.
+      I find flicking the edge of a keycap works well to create very short
+      key presses.
+    </p>
+
+    <table>
+      <tr>
+        <th>最短キー押下 (Shortest Key Press)</th>
+        <th>推定スキャンレート (Estimated Scan Rate)</th>
+      </tr>
+      <tr>
+        <td id="best-time">press any key</td>
+        <td id="scan-rate">press any key</td>
+      </tr>
+    </table>
+
+    <h2>理論</h2>
+    <p>
+      キーボードの<em>スキャンレート</em>は、キーボードがキーのマトリックス状態を（内部的に）更新する頻度を測定します。
+      通常、スキャンレートは使用されているキーのスイッチの
+      <a href="https://en.wikipedia.org/wiki/Switch#Contact_bounce" target="_blank">バウンスタイム</a>
+      とデバウンスアルゴリズムによって制限されます。例えば、Cherry MXメカニカルスイッチのデバウンス時間は
+      ≤5msとされています。シンプルなアルゴリズムが使用されており、スイッチ信号の安定化を5ms待つ場合、
+      スキャンレートは200Hzに制限されます。
+    </p>
+    
+    <p>
+      ここで使用されている考え方は、キーボードのスキャンレートがキー押下とキーリリースの最短遅延を
+      実質的に決定するというものです。この情報を使用して、スキャンレートを次のように推定します:
+      <code>ScanRate = 1 / ShortestKeyHold</code>.
+    </p>
+    
+    <p>
+      スキャンレートは<strong>ポールレート</strong>とは異なる点に注意してください。USBデバイスの場合、
+      <em>ポールレート</em>は、OSがUSBデバイスの更新を確認する頻度を指します。
+      ポールレートとスキャンレートは、最大入力遅延を決定します。
+      例えば、前述の例でスキャン間隔が5msの場合、ポールレートが1000Hzであれば、
+      キーボードは1msごとにポーリングされるので、最大入力遅延は1+5=6msになります。
+      しかし、スキャンレートが100Hzであれば、最大入力遅延は10+5=15msになります。
+      USBデバイスのポールレートは、ソフトウェアを使用して確認することが可能です。
+    </p>
+    
+    <p>
+      これらの計算は参考程度にとどめてください。
+    </p>
+    <p>
+    The <em>scan rate</em> of a keyboard measures how frequently the keyboard updates (internally)
+    the state of its key matrix.
+    Normally, the scan rate is limited by the
+    <a href="https://en.wikipedia.org/wiki/Switch#Contact_bounce" target="_blank">bounce time</a>
+    of the key switches used and the debounce algorithm used. For example, the debounce
+    time of Cherry MX mechanical switches is rated at ≤5ms. So assuming a simple
+    algorithm is used that waits 5ms for a switch signal to stabilize, then the scan rate
+    would be limited to 200Hz.
+    </p>
+
+    <p>
+    The idea used here is that the scan rate of the keyboard effectively
+    determines the shortest delay between a key press and a key release.
+    Using this information we estimate the scan rate as:
+    <code>ScanRate = 1 / ShortestKeyHold</code>.
+    </p>
+
+    <p>
+    Note that scan rate is <strong>not</strong> the same as poll rate. On a USB device,
+    <em>poll rate</em> refers to how often the OS will check the USB device for updates.
+    The poll rate together with the scan rate determines the maximum input latency.
+    For example, take the example above were the scan interval is 5ms. If our poll
+    rate is 1000Hz, then the keyboard is polled every 1ms and so the maximal
+    input latency is 1+5=6ms. However, if the scan rate were 100Hz, then the maximal
+    input latency would be 10+5=15ms.
+    Note: It is possible to look up the poll rate of a USB device using software.
+    </p>
+
+    <p>
+    Take these calculations with a grain of salt.
+    </p>
+
+    <h2>Key press history</h2>
+
+    <ul id="event-history">
+    </ul>
+
+    <script src="key-scan.js" type="text/javascript" charset="utf-8"></script>
+  </body>
+</html>
